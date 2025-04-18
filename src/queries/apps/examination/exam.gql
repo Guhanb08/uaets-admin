@@ -1,0 +1,145 @@
+fragment ExamFields on Exam {
+  id
+  level
+  name
+  description
+  duration
+  totalMarks
+  courseName
+  language
+  courseId
+  examType
+  passingMarks
+  defaultMarks
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+
+fragment CourseFields on Course {
+  id
+  name
+  shortDescription
+  description
+  longDescription
+  thumbnail
+  videoUrl
+  gallery
+  isFree
+  price
+  documents
+  isDiscounted
+  finalPrice
+  position
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+  courseCategoryId
+}
+
+query AllExam {
+  AllExam {
+    ...ExamFields
+    course {
+      ...CourseFields
+    }
+  }
+}
+
+query Exam($id: ID!) {
+  Exam(id: $id) {
+    ...ExamFields
+      course {
+      ...CourseFields
+    }
+  }
+}
+
+mutation CreateExam(
+  $level: Int
+  $name: String!
+  $description: String
+  $duration: Int
+  $courseName: String
+  $courseId: String!
+  $totalMarks: Int
+  $examType: ExamType
+  $language: String!
+  $passingMarks: Int
+  $defaultMarks: Int
+  $status: Status
+) {
+  CreateExam(
+    data: {
+      level: $level
+      name: $name
+      description: $description
+      duration: $duration
+      language: $language
+      courseName: $courseName
+      examType: $examType
+      totalMarks: $totalMarks
+      passingMarks: $passingMarks
+      defaultMarks: $defaultMarks
+      status: $status
+      course: { connect: { id: $courseId } }
+    }
+  ) {
+    ...ExamFields
+  }
+}
+
+mutation UpdateExam(
+  $id: ID!
+  $level: Int
+  $name: String
+  $description: String
+  $courseName: String
+  $courseId: String!
+  $duration: Int
+  $totalMarks: Int
+  $passingMarks: Int
+  $language: String!
+  $defaultMarks: Int
+  $examType: ExamType
+  $status: Status
+) {
+  UpdateExam(
+    id: $id
+    data: {
+      level: $level
+      name: $name
+      description: $description
+      duration: $duration
+      courseName: $courseName
+      language: $language
+      totalMarks: $totalMarks
+      passingMarks: $passingMarks
+      examType: $examType
+      defaultMarks: $defaultMarks
+      status: $status
+      course: { connect: { id: $courseId } }
+    }
+  ) {
+    ...ExamFields
+  }
+}
+
+mutation UpdateExamStatus($id: ID!, $status: Status!) {
+  UpdateExam(id: $id, data: { status: $status }) {
+    id
+    status
+  }
+}
+
+mutation DeleteExam($id: ID!) {
+  DeleteExam(id: $id)
+}
+
+mutation RepositionExam($fromIndex: Int!, $toIndex: Int!) {
+  RepositionExam(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

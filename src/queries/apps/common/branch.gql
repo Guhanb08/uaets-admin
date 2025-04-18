@@ -1,0 +1,69 @@
+fragment BranchFields on Branch {
+  id
+  name
+  description
+  address
+  image
+  phone
+  email
+  status
+  position
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+
+query AllBranch {
+  AllBranch {
+    ...BranchFields
+  }
+}
+
+query AllActiveBranch {
+  AllBranch(where: { status: { equals: ACTIVE } }) {
+    ...BranchFields
+  }
+}
+
+query Branch($id: ID!) {
+  Branch(id: $id) {
+    ...BranchFields
+  }
+}
+
+mutation CreateBranch(
+  $name: String!
+  $description: String
+  $address: String
+  $image : String
+  $phone: String
+  $email: String
+) {
+  CreateBranch(
+    data: {
+      name: $name
+      description: $description
+      address: $address
+      phone: $phone
+      image: $image
+      email: $email
+    }
+  ) {
+    ...BranchFields
+  }
+}
+
+mutation UpdateBranch($id: ID!, $data: BranchUpdateInput!) {
+  UpdateBranch(id: $id, data: $data) {
+    ...BranchFields
+  }
+}
+
+mutation DeleteBranch($id: ID!) {
+  DeleteBranch(id: $id)
+}
+
+mutation RepositionBranch($fromIndex: Int!, $toIndex: Int!) {
+  RepositionBranch(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

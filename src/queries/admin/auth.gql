@@ -1,0 +1,6 @@
+
+mutation AdminLogin($email: String!, $password: String!) {
+  AdminAuth(payload: { email: $email, password: $password }) {
+    email
+  }
+}

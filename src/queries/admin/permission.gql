@@ -1,0 +1,57 @@
+fragment PermissionFields on Permission {
+  id
+  permissionName
+  description
+  corePermission
+  position
+  createdBy
+  updatedBy
+  deletedBy
+  createdAt
+  updatedAt
+  deletedAt
+}
+
+query AllPermission {
+  AllPermission {
+    ...PermissionFields
+  }
+}
+query AllActivePermission {
+  AllPermission(where: { deletedAt: { equals: null } }) {
+    ...PermissionFields
+  }
+}
+mutation CreatePermission(
+  $permissionName: String!
+  $description: String!
+  $corePermission: Boolean!
+) {
+  CreatePermission(
+    data: {
+      permissionName: $permissionName
+      description: $description
+      corePermission: $corePermission
+    }
+  ) {
+    ...PermissionFields
+  }
+}
+
+# mutation DeletePermission($id: Int!) {
+#   DeletePermission(id: $id) {
+#     ...PermissionFields
+#   }
+# }
+# # delete many is arrary of ids
+
+# mutation DeleteManyPermission($ids: [Int!]!) {
+#   DeleteManyPermission(ids: $ids)
+# }
+# # repoisition permission fromIndex toIndex
+
+# mutation RepositionPermission($fromIndex: Int!, $toIndex: Int!) {
+#   RepositionPermission(data: { fromIndex: $fromIndex, toIndex: $toIndex }) {
+#     ...PermissionFields
+#   }
+# }

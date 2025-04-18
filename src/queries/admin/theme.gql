@@ -1,0 +1,23 @@
+
+# auth
+
+query FindActiveThemeConfig {
+  ThemeConfigByCondition(where: { status: { equals: ACTIVE } }) {
+    id
+    primaryColor
+    darkenColor
+    themeMode
+    skin
+    layout
+    contentWidth
+    direction
+    version
+    status
+    createdBy
+    updatedBy
+    deletedBy
+    createdAt
+    updatedAt
+    deletedAt
+  }
+}

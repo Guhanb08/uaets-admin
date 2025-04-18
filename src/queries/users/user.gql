@@ -1,0 +1,147 @@
+fragment UserFields on User {
+  id
+  name
+  email
+  mobileCode
+  mobile
+  isVerified
+  position
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+fragment UserProfileFields on UserProfile {
+  id
+  userId
+  bio
+  avatar
+  address
+  addressLine2
+  city
+  country
+  state
+  zipCode
+  foundUsOn
+  expiryDate
+  courses
+  comment
+  documents
+  language
+  branch
+  agreeToTerms
+  registeredThrough
+  dob
+  createdAt
+  updatedAt
+}
+
+fragment LearnerFields on User {
+  ...UserFields
+  profile {
+    ...UserProfileFields
+  }
+}
+
+query AllUser {
+  AllUser {
+    ...UserFields
+  }
+}
+query AllLearner {
+  AllUser(where: { role: { is: { roleName: { equals: "User" } } } }) {
+    ...LearnerFields
+  }
+}
+
+query Learner($id: ID!) {
+  User(id: $id) {
+    ...LearnerFields
+  }
+}
+
+query User($id: ID!) {
+  User(id: $id) {
+    ...UserFields
+  }
+}
+
+
+mutation CreateUserByAdmin(
+  $email: String!
+  $mobile: String!
+  $mobileCode: String!
+  $name: String!
+  $roleId: String!
+  $profile: CreateUserProfileInput!
+  $isVerified: Boolean
+  $password: String!
+) {
+  CreateUserByAdmin(
+    data: {
+      email: $email
+      isVerified: $isVerified
+      mobile: $mobile
+      mobileCode: $mobileCode
+      name: $name
+      profile: $profile
+      password: $password
+      roleId: $roleId
+    }
+  ) {
+    ...UserFields
+  }
+}
+
+mutation UpdateUser($id: ID!, $name: String) {
+  UpdateUser(id: $id, data: { name: $name }) {
+    ...UserFields
+  }
+}
+
+mutation UpdateUserByAdmin(
+  $id: ID!
+  $email: String
+  $mobile: String
+  $mobileCode: String
+  $name: String
+  $isVerified: Boolean
+  $password: String
+  $profile: CreateUserProfileInput!
+) {
+  UpdateUserByAdmin(
+    data: {
+      id: $id
+      email: $email
+      isVerified: $isVerified
+      mobile: $mobile
+      mobileCode: $mobileCode
+      name: $name
+      profile: $profile
+      password: $password
+    }
+  ) {
+    ...UserFields
+  }
+}
+
+mutation UpdateUserStatus($id: ID!, $status: UserStatus!) {
+  UpdateUser(id: $id, data: { status: $status }) {
+    id
+    status
+  }
+}
+
+mutation DeleteUser($id: ID!) {
+  DeleteUser(id: $id)
+}
+
+mutation RepositionUser($fromIndex: Int!, $toIndex: Int!) {
+  RepositionUser(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

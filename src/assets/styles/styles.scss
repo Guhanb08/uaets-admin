@@ -1,0 +1,9 @@
+@import url('./tailwind.scss');
+// Write your overrides
+.position-initial{
+    position: initial !important;
+}
+
+.status-switch .v-selection-control__wrapper{
+    height: auto;
+}

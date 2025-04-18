@@ -1,0 +1,81 @@
+fragment ContentFields on Content {
+ id
+  key
+  title
+  image
+  contentType
+  formConfig
+  formValue
+  position
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+
+query AllContent {
+  AllContent {
+    ...ContentFields
+  }
+}
+
+query AllActiveContent  {
+  AllContent(where: { status: { equals: ACTIVE } },
+  orderBy: [ {
+     position: asc
+  }]) {
+    ...ContentFields
+  }
+}
+
+
+query Content($id: ID!) {
+  Content(id: $id) {
+    ...ContentFields
+  }
+}
+
+mutation CreateContent(
+  $key: String!
+  $title: String
+  $image: String
+  $contentType: ContentType!
+  $formConfig: JSON
+  $formValue: JSON
+) {
+  CreateContent(
+    data: {
+      key: $key
+      title: $title
+      image: $image
+      contentType: $contentType
+      formConfig: $formConfig
+      formValue: $formValue
+    }
+  ) {
+    ...ContentFields
+  }
+}
+
+
+mutation UpdateContent($id: ID!, $data: ContentUpdateInput!) {
+  UpdateContent(id: $id, data: $data) {
+    ...ContentFields
+  }
+}
+
+mutation UpdateContentStatus($id: ID!, $status: Status!) {
+  UpdateContent(id: $id, data: { status: $status }) {
+    id
+    status
+  }
+}
+
+mutation DeleteContent($id: ID!) {
+  DeleteContent(id: $id)
+}
+
+mutation RepositionContent($fromIndex: Int!, $toIndex: Int!) {
+  RepositionContent(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

@@ -1,0 +1,140 @@
+fragment CourseFields on Course {
+  id
+  name
+  shortDescription
+  description
+  longDescription
+  thumbnail
+  videoUrl
+  gallery
+  isFree
+  price
+  documents
+  isDiscounted
+  finalPrice
+  position
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+  courseCategoryId
+}
+
+query AllCourse {
+  AllCourse {
+    ...CourseFields
+  }
+}
+
+query AllActiveCourse  {
+  AllCourse(where: { status: { equals: ACTIVE } }) {
+    ...CourseFields
+  }
+}
+
+
+query Course($id: ID!) {
+  Course(id: $id) {
+    ...CourseFields
+  }
+}
+
+mutation CreateCourse(
+  $name: String!
+  $shortDescription: String
+  $description: String
+  $longDescription: String
+  $gallery: JSON
+  $thumbnail: JSON
+  $videoUrl: String
+  $documents: JSON
+  $isFree: Boolean
+  $price: Float
+  $isDiscounted: Boolean
+  $finalPrice: Float
+  $status: Status
+  $courseCategoryId: String
+  $courseTags: [CourseTagCreateWithoutCourseInput!]
+) {
+  CreateCourse(
+    data: {
+      name: $name
+      shortDescription: $shortDescription
+      description: $description
+      longDescription: $longDescription
+      documents :  $documents
+      gallery: $gallery
+      thumbnail: $thumbnail
+      videoUrl: $videoUrl
+      isFree: $isFree
+      price: $price
+      isDiscounted: $isDiscounted
+      finalPrice: $finalPrice
+      status: $status
+      CourseCategory: { connect: { id: $courseCategoryId } }
+      CourseTag: { create: $courseTags }
+    }
+  ) {
+    ...CourseFields
+  }
+}
+
+
+
+mutation UpdateCourse(
+  $id: ID!
+  $name: String
+  $shortDescription: String
+  $description: String
+  $longDescription: String
+  $gallery: JSON
+  $documents: JSON
+  $thumbnail: JSON
+  $videoUrl: String
+  $isFree: Boolean
+  $price: Float
+  $isDiscounted: Boolean
+  $finalPrice: Float
+  $status: Status
+  $courseCategoryId: String
+  $courseTags: [CourseTagCreateWithoutCourseInput!]
+) {
+  UpdateCourse(
+    id: $id
+    data: {
+      name: $name
+      shortDescription: $shortDescription
+      description: $description
+      longDescription: $longDescription
+      gallery: $gallery
+      documents :  $documents
+      thumbnail: $thumbnail
+      videoUrl: $videoUrl
+      isFree: $isFree
+      price: $price
+      isDiscounted: $isDiscounted
+      finalPrice: $finalPrice
+      status: $status
+      CourseCategory: { connect: { id: $courseCategoryId } }
+      CourseTag: { create: $courseTags }
+    }
+  ) {
+    ...CourseFields
+  }
+}
+
+mutation UpdateCourseStatus($id: ID!, $status: Status!) {
+  UpdateCourse(id: $id, data: { status: $status }) {
+    id
+    status
+  }
+}
+
+mutation DeleteCourse($id: ID!) {
+  DeleteCourse(id: $id)
+}
+
+mutation RepositionCourse($fromIndex: Int!, $toIndex: Int!) {
+  RepositionCourse(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

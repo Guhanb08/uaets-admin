@@ -1,0 +1,64 @@
+fragment InquiryFields on Inquiry {
+  id
+  name
+  email
+  phone
+  courseName
+  regard
+  message
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+
+
+query AllInquiry {
+  AllInquiry {
+    ...InquiryFields
+  }
+}
+
+query Inquiry($id: ID!) {
+  Inquiry(id: $id) {
+    ...InquiryFields
+  }
+}
+
+
+mutation CreateInquiry(
+  $name: String!
+  $email: String!
+  $phone: String
+  $courseName: String
+  $regard: String
+  $message: String!
+) {
+  CreateInquiry(
+    data: {
+      name: $name
+      email: $email
+      phone: $phone
+      courseName: $courseName
+      regard: $regard
+      message: $message
+    }
+  ) {
+    ...InquiryFields
+  }
+}
+
+mutation UpdateInquiry($id: ID!, $data: InquiryUpdateInput!) {
+  UpdateInquiry(id: $id, data: $data) {
+    ...InquiryFields
+  }
+}
+
+mutation DeleteInquiry($id: ID!) {
+  DeleteInquiry(id: $id)
+}
+
+
+mutation RepositionInquiry($fromIndex: Int!, $toIndex: Int!) {
+  RepositionInquiry(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}

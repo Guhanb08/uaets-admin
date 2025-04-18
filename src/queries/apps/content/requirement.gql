@@ -1,0 +1,69 @@
+fragment RequirementFields on Requirement {
+  id
+  title
+  description
+  image
+  position
+  status
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+query AllRequirement {
+  AllRequirement {
+    ...RequirementFields
+  }
+}
+
+query AllActiveRequirement {
+  AllRequirement(where: { status: { equals: ACTIVE } } ,
+  orderBy: [ {
+     position: asc
+  }]) {
+    ...RequirementFields
+  }
+}
+
+query Requirement($id: ID!) {
+  Requirement(id: $id) {
+    ...RequirementFields
+  }
+}
+
+mutation CreateRequirement(
+  $title: String!
+  $description: String!
+  $image: String
+) {
+  CreateRequirement(
+    data: {
+      title: $title
+      description: $description
+      image: $image
+    }
+  ) {
+    ...RequirementFields
+  }
+}
+
+mutation UpdateRequirement($id: ID!, $data: RequirementUpdateInput!) {
+  UpdateRequirement(id: $id, data: $data) {
+    ...RequirementFields
+  }
+}
+
+mutation UpdateRequirementStatus($id: ID!, $status: Status!) {
+  UpdateRequirement(id: $id, data: { status: $status }) {
+    id
+    status
+  }
+}
+
+mutation DeleteRequirement($id: ID!) {
+  DeleteRequirement(id: $id)
+}
+
+mutation RepositionRequirement($fromIndex: Int!, $toIndex: Int!) {
+  RepositionRequirement(data: { fromIndex: $fromIndex, toIndex: $toIndex })
+}
