@@ -80,6 +80,7 @@ declare module 'vue' {
     SaveLanguage: typeof import('./src/views/apps/common/saveLanguage.vue')['default']
     SaveLearner: typeof import('./src/views/apps/learner/saveLearner.vue')['default']
     SaveLearnerCourse: typeof import('./src/views/apps/learner/saveLearnerCourse.vue')['default']
+    SaveLedger: typeof import('./src/views/apps/common/saveLedger.vue')['default']
     SavePermissions: typeof import('./src/views/admin/permissions/SavePermissions.vue')['default']
     SaveQuestion: typeof import('./src/views/apps/question/saveQuestion.vue')['default']
     SaveRequirement: typeof import('./src/views/apps/content/saveRequirement.vue')['default']

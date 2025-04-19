@@ -1,0 +1,79 @@
+fragment LedgerFields on Ledger {
+  id
+  amount
+  transactionType
+  transactionDate
+  remarks
+  referenceId
+  createdBy
+  updatedBy
+  createdAt
+  updatedAt
+}
+
+
+query AllLedger {
+  AllLedger {
+    ...LedgerFields
+  }
+}
+
+query AllLedgerByType($type: LedgerType!) {
+  AllLedger(where: { transactionType: { equals: $type } }) {
+    ...LedgerFields
+  }
+}
+
+query Ledger($id: ID!) {
+  Ledger(id: $id) {
+    ...LedgerFields
+  }
+}
+
+
+
+mutation CreateLedger(
+  $amount: Float!
+  $transactionType: LedgerType!
+  $transactionDate: DateTime!
+  $remarks: String
+  $referenceId: String
+) {
+  CreateLedger(
+    data: {
+      amount: $amount
+      transactionType: $transactionType
+      transactionDate: $transactionDate
+      remarks: $remarks
+      referenceId: $referenceId
+    }
+  ) {
+    ...LedgerFields
+  }
+}
+
+mutation UpdateLedger(
+  $id: ID!
+  $amount: Float
+  $transactionType: LedgerType
+  $transactionDate: DateTime
+  $remarks: String
+  $referenceId: String
+) {
+  UpdateLedger(
+    id: $id
+    data: {
+      amount: $amount
+      transactionType: $transactionType
+      transactionDate: $transactionDate
+      remarks: $remarks
+      referenceId: $referenceId
+    }
+  ) {
+    ...LedgerFields
+  }
+}
+
+mutation DeleteLedger($id: ID!) {
+  DeleteLedger(id: $id)
+}

@@ -30,13 +30,10 @@ import { toast } from "vue-sonner";
  * GraphQL
  * ======================= */
 import {
-  useAllCourseQuery,
-  useDeleteCourseMutation,
-  useRepositionCourseMutation,
-  useUpdateCourseMutation,
-  Course,
-  Status,
-  useUpdateCourseStatusMutation
+  useAllLedgerQuery,
+  useDeleteLedgerMutation,
+  useUpdateLedgerMutation,
+  Ledger,
 } from "@/generated/operations";
 
 /* =======================
@@ -77,7 +74,7 @@ const selectOptions = {
   type: "Single",
 };
 
-const selectedRow = ref<Course>();
+const selectedRow = ref<Ledger>();
 const editId = ref<string | undefined>(undefined);
 const isDeleteConfirmDialogVisible = ref(false);
 
@@ -103,50 +100,53 @@ const contextMenuItems = ref([
 ]);
 
 const toolbar = ref([
-   { text: "Add", id: "grid_tool_add", iconCss: "e-icons e-add" },
+  { text: "Add", id: "grid_tool_add", iconCss: "e-icons e-add" },
   { text: "Edit", id: "grid_tool_edit", iconCss: "e-icons e-edit" },
   { text: "Delete", id: "grid_tool_delete", iconCss: "e-icons e-delete" },
-   
-   "Search"]);
+
+  "Search",
+]);
 
 const columns = ref([
   {
     field: "id",
     headerText: "ID",
     isPrimaryKey: true,
-    visible : false,
     width: 50,
+    visible: false,
+  },
+
+  {
+    field: "transactionDate",
+    headerText: "Transaction Date",
+    type: "date",
+    format: "dd-MMM-yyyy", // Example: 18-Apr-2025
+    width: 120,
+  },
+
+  {
+    field: "referenceId",
+    headerText: "Reference ID",
+    width: 150,
+  },
+
+  {
+    field: "transactionType",
+    headerText: "Transaction Type",
+    width: 120,
   },
   
   {
-    field: "name",
-    headerText: "Name",
+    field: "amount",
+    headerText: "Amount",
+    format: "C2", // Currency format (you can adjust based on locale)
+    width: 100,
   },
 
   {
-    field: "shortDescription",
-    headerText: "Description",
-  },
-
-  {
-    field: "isFree",
-    headerText: "Free",
-  },
-
-
-  {
-    field: "price",
-    headerText: "Price",
-  },
-
-  {
-    field: "isDiscounted",
-    headerText: "Discounted",
-  },
-
-  {
-    field: "finalPrice",
-    headerText: "Final Price",
+    field: "remarks",
+    headerText: "Remarks",
+    width: 200,
   },
   {
     field: "status",
@@ -166,41 +166,30 @@ const columns = ref([
  * ======================= */
 
 const {
-  result: course,
-  loading: courseLoading,
-  error: courseError,
-  refetch: refetchCourse,
-} = useAllCourseQuery();
+  result: ledgers,
+  loading: ledgerLoading,
+  error: ledgerError,
+  refetch: refetchLedgers,
+} = useAllLedgerQuery();
 
 const {
-  mutate: deleteCourse,
-  loading: courseDeleteLoading,
-  error: courseDeleteError,
-} = useDeleteCourseMutation();
+  mutate: deleteLedger,
+  loading: ledgerDeleteLoading,
+  error: ledgerDeleteError,
+} = useDeleteLedgerMutation();
+
+
 
 const {
-  mutate: repositionCourse,
-  loading: repositionCourseFetching,
-  error: repositionCourseError,
-} = useRepositionCourseMutation();
-
-const {
-  mutate: updateCourse,
-  loading: updateCourseLoading,
-  error: updateCourseError,
-} = useUpdateCourseMutation();
-
-const {
-  mutate: updateCourseStatus,
-  loading: updateCourseStatusLoading,
-  error: updateCourseStatusError,
-} = useUpdateCourseStatusMutation();
-
+  mutate: updateLedger,
+  loading: updateLedgerLoading,
+  error: updateLedgerError,
+} = useUpdateLedgerMutation();
 
 /* =======================
  * Methods
  * ======================= */
-
+const fileHostUrl = import.meta.env.VITE_FILE_BASE_URL
 const onEdit = () => {
   if (!selectedRow.value) {
     toast.warning("Please select a row to edit");
@@ -219,17 +208,16 @@ const onDeleteRequest = () => {
 const onDelete = async (confirm: boolean) => {
   if (!confirm || !selectedRow.value?.id) return;
 
-  await deleteCourse({ id: selectedRow.value.id });
-  if(!courseDeleteError.value) {
-    toast.success("Course deleted successfully");
+  await deleteLedger({ id: selectedRow.value.id });
+  if(!ledgerDeleteError.value) {
+    toast.success("Ledger deleted successfully");
   }
-
-  await refetchCourse();
+  await refetchLedgers();
 };
 
 const onClose = async () => {
   editId.value = undefined;
-  await refetchCourse();
+  await refetchLedgers();
 };
 
 const contextClicked = (args: ClickEventArgs) => {
@@ -244,21 +232,10 @@ const contextClicked = (args: ClickEventArgs) => {
   }
 };
 
-const onRowDrop = async (args: any) => {
-  args.cancel = true;
-  const fromIndex = args.fromIndex;
-  const toIndex = args.dropIndex;
-  await repositionCourse({
-    fromIndex,
-    toIndex,
-  });
-  await refetchCourse();
-};
 
 const toolbarClick = async (args: ClickEventArgs) => {
   args.cancel = true;
   switch (args.item.id) {
-
     case "grid_tool_add":
       isSaveDialogVisible.value = true;
       break;
@@ -272,7 +249,7 @@ const toolbarClick = async (args: ClickEventArgs) => {
 };
 
 const onRowSelected = (args: any) => {
-  selectedRow.value = args.data as Course;
+  selectedRow.value = args.data as Ledger;
 };
 const onRowDeSelected = () => {
   selectedRow.value = undefined;
@@ -291,22 +268,17 @@ const attachSearchHandler = () => {
   }
 };
 
-const onStatusChange = async (course: Course) => {
-  const newStatus =
-    course.status === Status.Active ? Status.Inactive : Status.Active;
-  await updateCourseStatus({
-    id: course.id,
-    status: newStatus
-  });
-  await refetchCourse();
-};
 
 /* =======================
  * Watchers
  * ======================= */
 
 watch(
-  [courseError, courseDeleteError, repositionCourseError, updateCourseError],
+  [
+    ledgerError,
+    ledgerDeleteError,
+    updateLedgerError,
+  ],
   (errors) => {
     errors.forEach((error) => {
       if (error) {
@@ -319,8 +291,8 @@ watch(
 /* =======================
  * Computed Properties
  * ======================= */
-const courseData = computed(() => {
-  return course?.value?.AllCourse;
+const ledgerData = computed(() => {
+  return ledgers?.value?.AllLedger;
 });
 /* =======================
  * Exposes
@@ -331,14 +303,13 @@ const courseData = computed(() => {
   <section>
     <VRow>
       <VCol cols="12">
-        <VCard id="table-list" title="Course">
+        <VCard id="table-list" title="Ledgers">
           <VCardText>
             <VProgressLinear
               v-if="
-                courseLoading ||
-                courseDeleteLoading ||
-                repositionCourseFetching ||
-                updateCourseLoading
+                ledgerLoading ||
+                ledgerDeleteLoading ||
+                updateLedgerLoading
               "
               indeterminate
               height="3"
@@ -349,7 +320,7 @@ const courseData = computed(() => {
             <ejs-grid
               ref="grid"
               id="grid"
-              :dataSource="courseData"
+              :dataSource="ledgerData"
               :contextMenuItems="contextMenuItems"
               :allowRowDragAndDrop="true"
               :allowGrouping="true"
@@ -371,11 +342,9 @@ const courseData = computed(() => {
               @contextMenuClick="contextClicked"
               :allowSelection="true"
               :selectionSettings="selectOptions"
-              :rowDrop="onRowDrop"
               :enablePersistence="false"
               @rowSelected="onRowSelected"
               @rowDeselected="onRowDeSelected"
-              
             >
               <template v-slot:emptyRecordTemplate>
                 <div class="emptyRecordTemplate">
@@ -383,20 +352,21 @@ const courseData = computed(() => {
                 </div>
               </template>
 
-              <template #statusTemplate="{ data }">
-                <VSwitch
-                  class="status-switch"
-                  color="success"
-                  :model-value="data.status === Status.Active"
-                  @change="onStatusChange(data)"
-                />
+              <template #nameTemplate="{ data }">
+              <div class="name-template">
+                <img  :src="fileHostUrl+data.icon" />
+                
+                <span>{{ data.name }}</span>
+              </div>
               </template>
+
+            
             </ejs-grid>
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
-    <SaveCourse
+    <SaveLedger
       v-if="isSaveDialogVisible"
       v-model:is-dialog-visible="isSaveDialogVisible"
       @update:is-dialog-visible="onClose"
@@ -411,4 +381,16 @@ const courseData = computed(() => {
   </section>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+.name-template{
+  img{
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  display: flex; 
+  align-items: center;
+
+}
+</style>
