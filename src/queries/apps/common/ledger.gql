@@ -3,6 +3,7 @@ fragment LedgerFields on Ledger {
   amount
   transactionType
   transactionDate
+  transactionBy
   remarks
   referenceId
   createdBy
@@ -36,6 +37,7 @@ mutation CreateLedger(
   $amount: Float!
   $transactionType: LedgerType!
   $transactionDate: DateTime!
+  $transactionBy: String
   $remarks: String
   $referenceId: String
 ) {
@@ -44,6 +46,7 @@ mutation CreateLedger(
       amount: $amount
       transactionType: $transactionType
       transactionDate: $transactionDate
+      transactionBy: $transactionBy
       remarks: $remarks
       referenceId: $referenceId
     }
@@ -57,6 +60,7 @@ mutation UpdateLedger(
   $amount: Float
   $transactionType: LedgerType
   $transactionDate: DateTime
+  $transactionBy: String
   $remarks: String
   $referenceId: String
 ) {
@@ -66,6 +70,8 @@ mutation UpdateLedger(
       amount: $amount
       transactionType: $transactionType
       transactionDate: $transactionDate
+      transactionBy: $transactionBy
+
       remarks: $remarks
       referenceId: $referenceId
     }

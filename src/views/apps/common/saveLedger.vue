@@ -57,10 +57,10 @@ const id = ref<number | null>(null); // `id` can be null
 
 const formRef = ref<VForm>();
 const initialFormState: CreateLedgerMutationVariables = {
-
   amount: 0,
   transactionType: LedgerType.Credit,
   transactionDate: new Date(),
+  transactionBy: "",
   remarks: "",
   referenceId: "",
 };
@@ -102,7 +102,7 @@ const onSubmit = async () => {
     if (!formValidate?.valid) return;
 
     if (props.id) {
-      await updateLedger({ id: props.id, data: { ...form } });
+      await updateLedger({ id: props.id, ...form });
       toast.success("Ledger updated successfully");
     } else {
       await createLedger(form);
@@ -184,20 +184,36 @@ const title = computed(() => {
         <VProgressLinear v-if="ledgerFindFetching" indeterminate height="3" color="primary" striped :rounded="false" />
         <VForm v-else ref="formRef" @submit.prevent="onSubmit()" @reset.prevent="onReset">
           <VRow>
+
             <VCol cols="12">
-              <AppTextField label="Name" v-model.trim="form.name" :rules="[requiredValidator]" />
+              <AppSelect prepend-inner-icon="tabler-credit-card-pay" label="Transaction Type"
+                :items="[LedgerType.Credit, LedgerType.Debit]" placeholder="Select Type" :rules="[requiredValidator]"
+                v-model="form.transactionType" />
             </VCol>
+
+
+        
             <VCol cols="12">
-              <AppTextField label="Code" v-model.trim="form.code" :rules="[requiredValidator]" />
+              <AppDateTimePicker
+                v-model="form.transactionDate"
+                label="Transaction Date"
+                    :config="{ dateFormat: 'F j, Y' }"
+              />
             </VCol>
 
             <VCol cols="12">
-              <FileUpload label="Icon" v-model:files="form.icon" :allowedFileTypes="['png', 'jpg', 'jpeg']"
-                :allowMultiSelection="false"></FileUpload>
+              <AppTextField label="Name" model.trim="form.transactionBy" :rules="[requiredValidator]"  />
             </VCol>
+
+
             <VCol cols="12">
-              <AppTextField label="Description" v-model.trim="form.description" />
+              <AppTextField label="Reference Id" v-model.trim="form.referenceId" />
             </VCol>
+       
+            <VCol cols="12">
+              <AppTextarea  label="Remarks" v-model.trim="form.remarks" />
+            </VCol>
+      
             <VCol cols="12">
               <div class="d-flex justify-end flex-wrap gap-3">
                 <VBtn variant="tonal" color="secondary" type="reset">
