@@ -31,25 +31,38 @@ const selectYearMonths = computed(() => {
   return ledgersData.value.find(l => l.year === selectedYear.value)?.months ?? []
 })
 
-watch(currentYear, () => {
+/* watch(currentYear, () => {
   currentMonth.value = null
-})
+}) */
 
 function incrementMonth() {
+  const currentYearIndex = ledgersData.value.findIndex(l => l.year === selectedYear.value)
   const months = selectYearMonths.value.map(m => m.month)
   const idx = months.indexOf(selectedMonth.value!)
+
   if (idx < months.length - 1) {
     currentMonth.value = months[idx + 1]
+  } else if (currentYearIndex < ledgersData.value.length - 1) {
+    const nextYear = ledgersData.value[currentYearIndex + 1]
+    currentYear.value = nextYear.year
+    currentMonth.value = nextYear.months[0].month
   }
 }
 
 function decrementMonth() {
+  const currentYearIndex = ledgersData.value.findIndex(l => l.year === selectedYear.value)
   const months = selectYearMonths.value.map(m => m.month)
   const idx = months.indexOf(selectedMonth.value!)
+
   if (idx > 0) {
     currentMonth.value = months[idx - 1]
+  } else if (currentYearIndex > 0) {
+    const prevYear = ledgersData.value[currentYearIndex - 1]
+    currentYear.value = prevYear.year
+    currentMonth.value = prevYear.months.at(-1)!.month
   }
 }
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown)
 })
@@ -65,26 +78,43 @@ function handleKeyDown(e: KeyboardEvent) {
     incrementMonth()
   }
 }
+const selectedMonthinTamil = computed(() => {
+  const month = selectedMonth.value
+  return month ? tamilMonths[month - 1] : ''
+})
 
+const tamilMonths = [
+  'ஜனவரி',
+  'பிப்ரவரி',
+  'மார்ச்',
+  'ஏப்ரல்',
+  'மே',
+  'ஜூன்',
+  'ஜூலை',
+  'ஆகஸ்ட்',
+  'செப்டெம்பர்',
+  'அக்டோபர்',
+  'நவம்பர்',
+  'டிசம்பர்',
+]
 </script>
 
 <template>
   <div class="container">
     <!-- Year Tabs -->
     <div class="tabs">
-      <button
-        v-for="data in ledgersData"
-        :key="data.year"
-        :class="['tab', { active: selectedYear === data.year }]"
-        @click="currentYear = data.year"
-      >
+      <button v-for="data in ledgersData" :key="data.year" :class="['tab', { active: selectedYear === data.year }]"
+        @click="currentYear = data.year;
+        currentMonth = null
+
+          ">
         {{ data.year }}
       </button>
     </div>
 
     <!-- Title -->
     <div class="header">
-      <h2 class="title">கணக்கு விபரம் - நவம்பர் {{ selectedYear }}</h2>
+      <h2 class="title">கணக்கு விபரம் - {{ selectedMonthinTamil }} {{ selectedYear }}</h2>
     </div>
 
     <!-- Ledger Table -->
@@ -105,7 +135,12 @@ function handleKeyDown(e: KeyboardEvent) {
             <td class="right highlight">{{ selectedData?.initialBalance.toFixed(2) }}</td>
             <td></td>
           </tr>
-          <tr><td>02</td><td></td><td></td><td></td></tr>
+          <tr>
+            <td>02</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr>
             <td>03</td>
             <td class="bold">மாத வரவு</td>
@@ -124,7 +159,12 @@ function handleKeyDown(e: KeyboardEvent) {
             <td></td>
             <td class="right highlight">{{ selectedData?.debits.toFixed(2) }}</td>
           </tr>
-          <tr><td>06</td><td></td><td></td><td></td></tr>
+          <tr>
+            <td>06</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr>
             <td>07</td>
             <td class="bold">{{ selectedData?.endDate }} ல் கையிருப்பு</td>
@@ -138,13 +178,8 @@ function handleKeyDown(e: KeyboardEvent) {
     <!-- Month Pagination -->
     <div class="footer-pagination">
       <button class="page" @click="decrementMonth">«</button>
-      <span
-        v-for="monthData in selectYearMonths"
-        :key="monthData.month"
-        class="page"
-        :class="{ active: selectedMonth === monthData.month }"
-        @click="currentMonth = monthData.month"
-      >
+      <span v-for="monthData in selectYearMonths" :key="monthData.month" class="page"
+        :class="{ active: selectedMonth === monthData.month }" @click="currentMonth = monthData.month">
         {{ monthData.month }}
       </span>
       <button class="page" @click="incrementMonth">»</button>

@@ -15,7 +15,7 @@ import {
   ExcelExport,
   Filter,
   AggregateDirective as EAggregate,
-   AggregatesDirective, 
+  AggregatesDirective,
   Aggregate,
   Group,
   Page,
@@ -125,8 +125,8 @@ const columns = ref([
   {
     field: "transactionDate",
     headerText: "Transaction Date",
-        type: "date",
-        format: "dd-MMM-yyyy", // Example: 18-Apr-2025
+    type: "date",
+    format: "dd-MMM-yyyy", // Example: 18-Apr-2025
 
   },
 
@@ -305,7 +305,7 @@ const ledgerData = computed(() => {
   return ledgers?.value?.AllLedger;
 });
 
-const groupOptions = {  columns: [  ] };
+const groupOptions = { columns: [] };
 
 /* =======================
  * Exposes
@@ -323,17 +323,17 @@ const groupOptions = {  columns: [  ] };
               ledgerDeleteLoading ||
               updateLedgerLoading
             " indeterminate height="3" color="primary" striped :rounded="false" />
-            <ejs-grid ref="grid" id="grid" :dataSource="ledgerData" :contextMenuItems="contextMenuItems"
+            <ejs-grid  v-if="ledgerData?.length" ref="grid" id="grid" :dataSource="ledgerData" :contextMenuItems="contextMenuItems"
               :groupSettings="groupOptions" :allowRowDragAndDrop="false" :allowGrouping="true"
               :emptyRecordTemplate="'emptyRecordTemplate'" :allowSorting="true" :allowFiltering="true"
               :allowPaging="true" :allowResizing="true" :pageSettings="pageSettings" :filterSettings="filterSettings"
               :allowPdfExport="true" :allowExcelExport="true" :editSettings="editSettings" :toolbar="toolbar"
               :columns="columns" :toolbarClick="toolbarClick" @created="attachSearchHandler" :showColumnMenu="true"
               @contextMenuClick="contextClicked" :allowSelection="true" :selectionSettings="selectOptions"
-              :enablePersistence="false" @rowSelected="onRowSelected" @rowDeselected="onRowDeSelected">
+              :enablePersistence="false" @rowSelected="onRowSelected" @rowDeselected="onRowDeSelected" >
 
-              
-              
+
+
               <template v-slot:emptyRecordTemplate>
                 <div class="emptyRecordTemplate">
                   There is no data available to display at the moment.
@@ -353,6 +353,13 @@ const groupOptions = {  columns: [  ] };
                 </div>
               </template>
 
+              <e-aggregates>
+                <e-aggregate>
+                  <e-columns>
+                    <e-column field="amount" type="Sum" format="C2" footerTemplate="Total: ₹ ${Sum}" />
+                  </e-columns>
+                </e-aggregate>
+              </e-aggregates>
 
 
             </ejs-grid>
