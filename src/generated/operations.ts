@@ -349,6 +349,30 @@ export type LoginEntity = {
   email: Scalars['String']['output'];
 };
 
+export type MonthlyLedger = {
+  __typename?: 'MonthlyLedger';
+  balanceaftecredits: Scalars['Float']['output'];
+  credits: Scalars['Float']['output'];
+  debits: Scalars['Float']['output'];
+  endDate: Scalars['String']['output'];
+  finalBalance: Scalars['Float']['output'];
+  initialBalance: Scalars['Float']['output'];
+  previousEndDate: Scalars['String']['output'];
+  startDate: Scalars['String']['output'];
+};
+
+export type MonthlyLedgerByMonth = {
+  __typename?: 'MonthlyLedgerByMonth';
+  data: MonthlyLedger;
+  month: Scalars['Int']['output'];
+};
+
+export type MonthlyLedgerGroup = {
+  __typename?: 'MonthlyLedgerGroup';
+  months: Array<MonthlyLedgerByMonth>;
+  year: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   AdminAuth: LoginEntity;
@@ -889,6 +913,7 @@ export type Query = {
   GetUserByToken: User;
   Ledger: Ledger;
   LedgerByCondition: Ledger;
+  MonthlyLedgerSummary: Array<MonthlyLedgerGroup>;
   Permission: Permission;
   PermissionByCondition: Permission;
   Role: Role;
@@ -2668,6 +2693,11 @@ export type DeleteLedgerMutationVariables = Exact<{
 
 export type DeleteLedgerMutation = { __typename?: 'Mutation', DeleteLedger: boolean };
 
+export type AllMonthlyLedgerQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllMonthlyLedgerQuery = { __typename?: 'Query', MonthlyLedgerSummary: Array<{ __typename?: 'MonthlyLedgerGroup', year: string, months: Array<{ __typename?: 'MonthlyLedgerByMonth', month: number, data: { __typename?: 'MonthlyLedger', startDate: string, endDate: string, previousEndDate: string, initialBalance: number, credits: number, balanceaftecredits: number, debits: number, finalBalance: number } }> }> };
+
 export type UserFieldsFragment = { __typename?: 'User', id: string, name: string, email: string, mobileCode: string, mobile: string, isVerified: boolean, position: number, status: UserStatus, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any };
 
 export type UserProfileFieldsFragment = { __typename?: 'UserProfile', id: string, userId: string, bio?: string | null, avatar?: string | null, address?: string | null, addressLine2?: string | null, city?: string | null, country?: string | null, state?: string | null, zipCode?: string | null, foundUsOn?: string | null, expiryDate?: any | null, courses: any, comment?: string | null, documents: any, language?: string | null, branch?: string | null, agreeToTerms: boolean, registeredThrough: RegisteredTrough, dob?: any | null, createdAt: any, updatedAt: any };
@@ -3193,6 +3223,46 @@ export function useDeleteLedgerMutation(options: VueApolloComposable.UseMutation
   return VueApolloComposable.useMutation<DeleteLedgerMutation, DeleteLedgerMutationVariables>(DeleteLedgerDocument, options);
 }
 export type DeleteLedgerMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<DeleteLedgerMutation, DeleteLedgerMutationVariables>;
+export const AllMonthlyLedgerDocument = gql`
+    query AllMonthlyLedger {
+  MonthlyLedgerSummary {
+    year
+    months {
+      month
+      data {
+        startDate
+        endDate
+        previousEndDate
+        initialBalance
+        credits
+        balanceaftecredits
+        debits
+        finalBalance
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useAllMonthlyLedgerQuery__
+ *
+ * To run a query within a Vue component, call `useAllMonthlyLedgerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllMonthlyLedgerQuery` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useAllMonthlyLedgerQuery();
+ */
+export function useAllMonthlyLedgerQuery(options: VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>(AllMonthlyLedgerDocument, {}, options);
+}
+export function useAllMonthlyLedgerLazyQuery(options: VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>(AllMonthlyLedgerDocument, {}, options);
+}
+export type AllMonthlyLedgerQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<AllMonthlyLedgerQuery, AllMonthlyLedgerQueryVariables>;
 export const AllUserDocument = gql`
     query AllUser {
   AllUser {

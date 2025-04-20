@@ -23,6 +23,8 @@ declare module 'vue-router/auto-routes' {
     'admin-files-manager': RouteRecordInfo<'admin-files-manager', '/admin/files/manager', Record<never, never>, Record<never, never>>,
     'admin-permissions': RouteRecordInfo<'admin-permissions', '/admin/permissions', Record<never, never>, Record<never, never>>,
     'apps-common-ledger': RouteRecordInfo<'apps-common-ledger', '/apps/common/ledger', Record<never, never>, Record<never, never>>,
+    'apps-common-monthly-report': RouteRecordInfo<'apps-common-monthly-report', '/apps/common/monthly-report', Record<never, never>, Record<never, never>>,
+    'apps-common-yearly-report': RouteRecordInfo<'apps-common-yearly-report', '/apps/common/yearly-report', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
   }

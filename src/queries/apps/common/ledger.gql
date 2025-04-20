@@ -13,9 +13,7 @@ fragment LedgerFields on Ledger {
 }
 
 query AllLedger {
-  AllLedger(
-    orderBy: [ { transactionDate: desc }]
-  ) {
+  AllLedger(orderBy: [{ transactionDate: desc }]) {
     ...LedgerFields
   }
 }
@@ -83,4 +81,23 @@ mutation UpdateLedger(
 
 mutation DeleteLedger($id: ID!) {
   DeleteLedger(id: $id)
+}
+
+query AllMonthlyLedger {
+  MonthlyLedgerSummary {
+    year
+    months {
+      month
+      data {
+        startDate
+        endDate
+        previousEndDate
+        initialBalance
+        credits
+        balanceaftecredits
+        debits
+        finalBalance
+      }
+    }
+  }
 }
