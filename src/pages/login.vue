@@ -84,7 +84,7 @@ const onSubmit = async () => {
   });
 
   toast.success("Login Successful");
-  router.push("/");
+  router.push("/apps/common/ledger");
 };
 
 /* =======================

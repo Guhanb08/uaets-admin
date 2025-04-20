@@ -12,15 +12,19 @@ fragment LedgerFields on Ledger {
   updatedAt
 }
 
-
 query AllLedger {
-  AllLedger {
+  AllLedger(
+    orderBy: [ { transactionDate: desc }]
+  ) {
     ...LedgerFields
   }
 }
 
 query AllLedgerByType($type: LedgerType!) {
-  AllLedger(where: { transactionType: { equals: $type } }) {
+  AllLedger(
+    where: { transactionType: { equals: $type } }
+    orderBy: [{ createdAt: desc }, { transactionDate: desc }]
+  ) {
     ...LedgerFields
   }
 }
@@ -31,10 +35,8 @@ query Ledger($id: ID!) {
   }
 }
 
-
-
 mutation CreateLedger(
-  $amount: Float!
+  $amount: Float
   $transactionType: LedgerType!
   $transactionDate: DateTime!
   $transactionBy: String
@@ -71,7 +73,6 @@ mutation UpdateLedger(
       transactionType: $transactionType
       transactionDate: $transactionDate
       transactionBy: $transactionBy
-
       remarks: $remarks
       referenceId: $referenceId
     }

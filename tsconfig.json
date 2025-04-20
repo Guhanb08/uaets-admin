@@ -57,7 +57,9 @@
     "types": [
       "vite/client",
       "unplugin-vue-router/client",
-      "vite-plugin-vue-layouts/client"
+      "vite-plugin-vue-layouts/client",
+      "cypress",
+      "node"
     ]
   },
   "include": [
@@ -69,7 +71,9 @@
     "./src/**/*.vue",
     "./themeConfig.ts",
     "./auto-imports.d.ts",
-    "./components.d.ts"
+    "./components.d.ts",
+       "node_modules/cypress",
+    "cypress/**/*.ts"
   ],
   "exclude": [
     "./dist",

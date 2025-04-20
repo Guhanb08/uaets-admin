@@ -158,14 +158,14 @@ export type EnumUserStatusFilter = {
   notIn?: InputMaybe<Array<UserStatus>>;
 };
 
-export type FloatFilter = {
+export type FloatNullableFilter = {
   equals?: InputMaybe<Scalars['Float']['input']>;
   gt?: InputMaybe<Scalars['Float']['input']>;
   gte?: InputMaybe<Scalars['Float']['input']>;
   in?: InputMaybe<Array<Scalars['Float']['input']>>;
   lt?: InputMaybe<Scalars['Float']['input']>;
   lte?: InputMaybe<Scalars['Float']['input']>;
-  not?: InputMaybe<NestedFloatFilter>;
+  not?: InputMaybe<NestedFloatNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['Float']['input']>>;
 };
 
@@ -204,7 +204,7 @@ export enum LayoutType {
 
 export type Ledger = {
   __typename?: 'Ledger';
-  amount: Scalars['Float']['output'];
+  amount?: Maybe<Scalars['Float']['output']>;
   createdAt: Scalars['DateTime']['output'];
   createdBy?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -219,7 +219,7 @@ export type Ledger = {
 };
 
 export type LedgerCreateInput = {
-  amount: Scalars['Float']['input'];
+  amount?: InputMaybe<Scalars['Float']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdBy?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -250,7 +250,7 @@ export type LedgerOrderByRelevanceInput = {
 
 export type LedgerOrderByWithRelationInput = {
   _relevance?: InputMaybe<LedgerOrderByRelevanceInput>;
-  amount?: InputMaybe<SortOrder>;
+  amount?: InputMaybe<SortOrderInput>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrderInput>;
   id?: InputMaybe<SortOrder>;
@@ -303,7 +303,7 @@ export type LedgerWhereInput = {
   AND?: InputMaybe<Array<LedgerWhereInput>>;
   NOT?: InputMaybe<Array<LedgerWhereInput>>;
   OR?: InputMaybe<Array<LedgerWhereInput>>;
-  amount?: InputMaybe<FloatFilter>;
+  amount?: InputMaybe<FloatNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   createdBy?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
@@ -321,7 +321,7 @@ export type LedgerWhereUniqueInput = {
   AND?: InputMaybe<Array<LedgerWhereInput>>;
   NOT?: InputMaybe<Array<LedgerWhereInput>>;
   OR?: InputMaybe<Array<LedgerWhereInput>>;
-  amount?: InputMaybe<FloatFilter>;
+  amount?: InputMaybe<FloatNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   createdBy?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -625,14 +625,14 @@ export type NestedEnumUserStatusFilter = {
   notIn?: InputMaybe<Array<UserStatus>>;
 };
 
-export type NestedFloatFilter = {
+export type NestedFloatNullableFilter = {
   equals?: InputMaybe<Scalars['Float']['input']>;
   gt?: InputMaybe<Scalars['Float']['input']>;
   gte?: InputMaybe<Scalars['Float']['input']>;
   in?: InputMaybe<Array<Scalars['Float']['input']>>;
   lt?: InputMaybe<Scalars['Float']['input']>;
   lte?: InputMaybe<Scalars['Float']['input']>;
-  not?: InputMaybe<NestedFloatFilter>;
+  not?: InputMaybe<NestedFloatNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['Float']['input']>>;
 };
 
@@ -2615,29 +2615,29 @@ export type FindActiveThemeConfigQueryVariables = Exact<{ [key: string]: never; 
 
 export type FindActiveThemeConfigQuery = { __typename?: 'Query', ThemeConfigByCondition: { __typename?: 'ThemeConfig', id: string, primaryColor: string, darkenColor: string, themeMode: ThemeMode, skin: ThemeSkin, layout: LayoutType, contentWidth: ContentWidth, direction: DirectionType, version: string, status: Status, createdBy?: string | null, updatedBy?: string | null, deletedBy?: string | null, createdAt: any, updatedAt: any, deletedAt?: any | null } };
 
-export type LedgerFieldsFragment = { __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any };
+export type LedgerFieldsFragment = { __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any };
 
 export type AllLedgerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllLedgerQuery = { __typename?: 'Query', AllLedger: Array<{ __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any }> };
+export type AllLedgerQuery = { __typename?: 'Query', AllLedger: Array<{ __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any }> };
 
 export type AllLedgerByTypeQueryVariables = Exact<{
   type: LedgerType;
 }>;
 
 
-export type AllLedgerByTypeQuery = { __typename?: 'Query', AllLedger: Array<{ __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any }> };
+export type AllLedgerByTypeQuery = { __typename?: 'Query', AllLedger: Array<{ __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any }> };
 
 export type LedgerQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type LedgerQuery = { __typename?: 'Query', Ledger: { __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
+export type LedgerQuery = { __typename?: 'Query', Ledger: { __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
 
 export type CreateLedgerMutationVariables = Exact<{
-  amount: Scalars['Float']['input'];
+  amount?: InputMaybe<Scalars['Float']['input']>;
   transactionType: LedgerType;
   transactionDate: Scalars['DateTime']['input'];
   transactionBy?: InputMaybe<Scalars['String']['input']>;
@@ -2646,7 +2646,7 @@ export type CreateLedgerMutationVariables = Exact<{
 }>;
 
 
-export type CreateLedgerMutation = { __typename?: 'Mutation', CreateLedger: { __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
+export type CreateLedgerMutation = { __typename?: 'Mutation', CreateLedger: { __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
 
 export type UpdateLedgerMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -2659,7 +2659,7 @@ export type UpdateLedgerMutationVariables = Exact<{
 }>;
 
 
-export type UpdateLedgerMutation = { __typename?: 'Mutation', UpdateLedger: { __typename?: 'Ledger', id: string, amount: number, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
+export type UpdateLedgerMutation = { __typename?: 'Mutation', UpdateLedger: { __typename?: 'Ledger', id: string, amount?: number | null, transactionType: LedgerType, transactionDate: any, transactionBy?: string | null, remarks?: string | null, referenceId?: string | null, createdBy?: string | null, updatedBy?: string | null, createdAt: any, updatedAt: any } };
 
 export type DeleteLedgerMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -3004,7 +3004,7 @@ export function useFindActiveThemeConfigLazyQuery(options: VueApolloComposable.U
 export type FindActiveThemeConfigQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<FindActiveThemeConfigQuery, FindActiveThemeConfigQueryVariables>;
 export const AllLedgerDocument = gql`
     query AllLedger {
-  AllLedger {
+  AllLedger(orderBy: [{transactionDate: desc}]) {
     ...LedgerFields
   }
 }
@@ -3031,7 +3031,10 @@ export function useAllLedgerLazyQuery(options: VueApolloComposable.UseQueryOptio
 export type AllLedgerQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<AllLedgerQuery, AllLedgerQueryVariables>;
 export const AllLedgerByTypeDocument = gql`
     query AllLedgerByType($type: LedgerType!) {
-  AllLedger(where: {transactionType: {equals: $type}}) {
+  AllLedger(
+    where: {transactionType: {equals: $type}}
+    orderBy: [{createdAt: desc}, {transactionDate: desc}]
+  ) {
     ...LedgerFields
   }
 }
@@ -3090,7 +3093,7 @@ export function useLedgerLazyQuery(variables?: LedgerQueryVariables | VueComposi
 }
 export type LedgerQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<LedgerQuery, LedgerQueryVariables>;
 export const CreateLedgerDocument = gql`
-    mutation CreateLedger($amount: Float!, $transactionType: LedgerType!, $transactionDate: DateTime!, $transactionBy: String, $remarks: String, $referenceId: String) {
+    mutation CreateLedger($amount: Float, $transactionType: LedgerType!, $transactionDate: DateTime!, $transactionBy: String, $remarks: String, $referenceId: String) {
   CreateLedger(
     data: {amount: $amount, transactionType: $transactionType, transactionDate: $transactionDate, transactionBy: $transactionBy, remarks: $remarks, referenceId: $referenceId}
   ) {

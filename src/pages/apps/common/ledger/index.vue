@@ -14,6 +14,9 @@ import {
   GridComponent as EjsGrid,
   ExcelExport,
   Filter,
+  AggregateDirective as EAggregate,
+   AggregatesDirective, 
+  Aggregate,
   Group,
   Page,
   PdfExport,
@@ -58,6 +61,7 @@ provide("grid", [
   PdfExport,
   ExcelExport,
   Group,
+  Aggregate,
   ColumnMenu,
   RowDD,
   ContextMenu,
@@ -79,6 +83,7 @@ const editId = ref<string | undefined>(undefined);
 const isDeleteConfirmDialogVisible = ref(false);
 
 const isSaveDialogVisible = ref(false);
+const isReportDialogVisible = ref(false);
 const filterSettings = ref({ type: "Excel" });
 const editSettings = ref({
   allowEditing: false,
@@ -103,6 +108,7 @@ const toolbar = ref([
   { text: "Add", id: "grid_tool_add", iconCss: "e-icons e-add" },
   { text: "Edit", id: "grid_tool_edit", iconCss: "e-icons e-edit" },
   { text: "Delete", id: "grid_tool_delete", iconCss: "e-icons e-delete" },
+  { text: "Report", id: "grid_tool_report", iconCss: "e-icons e-copy" },
 
   "Search",
 ]);
@@ -119,40 +125,40 @@ const columns = ref([
   {
     field: "transactionDate",
     headerText: "Transaction Date",
-    type: "date",
-    format: "dd-MMM-yyyy", // Example: 18-Apr-2025
-    width: 120,
+        type: "date",
+        format: "dd-MMM-yyyy", // Example: 18-Apr-2025
+
   },
 
   {
     field: "referenceId",
     headerText: "Reference ID",
-    width: 150,
+
   },
 
   {
     field: "transactionType",
     headerText: "Transaction Type",
-    width: 120,
+
   },
-  
+  // transaction by
+  {
+    field: "transactionBy",
+    headerText: "Payer / Payee",
+
+  }
+  ,
   {
     field: "amount",
     headerText: "Amount",
-    format: "C2", // Currency format (you can adjust based on locale)
-    width: 100,
+    // inr 
+    template: "amountTemplate",
   },
 
   {
     field: "remarks",
     headerText: "Remarks",
-    width: 200,
-  },
-  {
-    field: "status",
-    headerText: "Status",
-    width: 50,
-    template: "statusTemplate",
+
   },
   ...tableDefaultFields,
 ]);
@@ -209,7 +215,7 @@ const onDelete = async (confirm: boolean) => {
   if (!confirm || !selectedRow.value?.id) return;
 
   await deleteLedger({ id: selectedRow.value.id });
-  if(!ledgerDeleteError.value) {
+  if (!ledgerDeleteError.value) {
     toast.success("Ledger deleted successfully");
   }
   await refetchLedgers();
@@ -244,6 +250,10 @@ const toolbarClick = async (args: ClickEventArgs) => {
       break;
     case "grid_tool_delete":
       onDeleteRequest();
+      break;
+
+    case "grid_tool_report":
+      isReportDialogVisible.value = true;
       break;
   }
 };
@@ -294,6 +304,9 @@ watch(
 const ledgerData = computed(() => {
   return ledgers?.value?.AllLedger;
 });
+
+const groupOptions = {  columns: [  ] };
+
 /* =======================
  * Exposes
  * ======================= */
@@ -305,91 +318,69 @@ const ledgerData = computed(() => {
       <VCol cols="12">
         <VCard id="table-list" title="Ledgers">
           <VCardText>
-            <VProgressLinear
-              v-if="
-                ledgerLoading ||
-                ledgerDeleteLoading ||
-                updateLedgerLoading
-              "
-              indeterminate
-              height="3"
-              color="primary"
-              striped
-              :rounded="false"
-            />
-            <ejs-grid
-              ref="grid"
-              id="grid"
-              :dataSource="ledgerData"
-              :contextMenuItems="contextMenuItems"
-              :allowRowDragAndDrop="true"
-              :allowGrouping="true"
-              :emptyRecordTemplate="'emptyRecordTemplate'"
-              :allowSorting="true"
-              :allowFiltering="true"
-              :allowPaging="true"
-              :allowResizing="true"
-              :pageSettings="pageSettings"
-              :filterSettings="filterSettings"
-              :allowPdfExport="true"
-              :allowExcelExport="true"
-              :editSettings="editSettings"
-              :toolbar="toolbar"
-              :columns="columns"
-              :toolbarClick="toolbarClick"
-              @created="attachSearchHandler"
-              :showColumnMenu="true"
-              @contextMenuClick="contextClicked"
-              :allowSelection="true"
-              :selectionSettings="selectOptions"
-              :enablePersistence="false"
-              @rowSelected="onRowSelected"
-              @rowDeselected="onRowDeSelected"
-            >
+            <VProgressLinear v-if="
+              ledgerLoading ||
+              ledgerDeleteLoading ||
+              updateLedgerLoading
+            " indeterminate height="3" color="primary" striped :rounded="false" />
+            <ejs-grid ref="grid" id="grid" :dataSource="ledgerData" :contextMenuItems="contextMenuItems"
+              :groupSettings="groupOptions" :allowRowDragAndDrop="false" :allowGrouping="true"
+              :emptyRecordTemplate="'emptyRecordTemplate'" :allowSorting="true" :allowFiltering="true"
+              :allowPaging="true" :allowResizing="true" :pageSettings="pageSettings" :filterSettings="filterSettings"
+              :allowPdfExport="true" :allowExcelExport="true" :editSettings="editSettings" :toolbar="toolbar"
+              :columns="columns" :toolbarClick="toolbarClick" @created="attachSearchHandler" :showColumnMenu="true"
+              @contextMenuClick="contextClicked" :allowSelection="true" :selectionSettings="selectOptions"
+              :enablePersistence="false" @rowSelected="onRowSelected" @rowDeselected="onRowDeSelected">
+
+              
+              
               <template v-slot:emptyRecordTemplate>
                 <div class="emptyRecordTemplate">
                   There is no data available to display at the moment.
                 </div>
               </template>
-
-              <template #nameTemplate="{ data }">
-              <div class="name-template">
-                <img  :src="fileHostUrl+data.icon" />
-                
-                <span>{{ data.name }}</span>
-              </div>
+              <template #amountTemplate="{ data }">
+                <span :class="data.transactionType === 'CREDIT' ? 'text-success' : 'text-error'">
+                  <b> ₹ {{ data.amount }}</b>
+                </span>
               </template>
 
-            
+              <template #nameTemplate="{ data }">
+                <div class="name-template">
+                  <img :src="fileHostUrl + data.icon" />
+
+                  <span>{{ data.name }}</span>
+                </div>
+              </template>
+
+
+
             </ejs-grid>
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
-    <SaveLedger
-      v-if="isSaveDialogVisible"
-      v-model:is-dialog-visible="isSaveDialogVisible"
-      @update:is-dialog-visible="onClose"
-      :id="editId"
-    />
+    <SaveLedger v-if="isSaveDialogVisible" v-model:is-dialog-visible="isSaveDialogVisible"
+      @update:is-dialog-visible="onClose" :id="editId" />
 
-    <DeleteDialog
-      v-if="isDeleteConfirmDialogVisible"
-      v-model:is-dialog-visible="isDeleteConfirmDialogVisible"
-      @confirm="onDelete"
-    />
+
+    <LedgerReport v-if="isReportDialogVisible" v-model:is-dialog-visible="isReportDialogVisible"
+      @update:is-dialog-visible="onClose" />
+
+
+    <DeleteDialog v-if="isDeleteConfirmDialogVisible" v-model:is-dialog-visible="isDeleteConfirmDialogVisible"
+      @confirm="onDelete" />
   </section>
 </template>
 
 <style lang="scss">
-
-.name-template{
-  img{
+.name-template {
+  img {
     height: 30px;
     margin-right: 10px;
   }
 
-  display: flex; 
+  display: flex;
   align-items: center;
 
 }

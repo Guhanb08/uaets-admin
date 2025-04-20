@@ -8,7 +8,7 @@
  * ======================= */
 import { toast } from "vue-sonner";
 import type { VForm } from "vuetify/components/VForm";
-
+import VueDatePicker from '@vuepic/vue-datepicker';
 /* =======================
  * GraphQL
  * ======================= */
@@ -25,7 +25,6 @@ import {
  * ======================= */
 interface Props {
   isDialogVisible: boolean;
-  id?: string;
 }
 interface Emit {
   (e: "update:isDialogVisible", value: boolean): void;
@@ -37,7 +36,6 @@ interface Emit {
 
 const props = withDefaults(defineProps<Props>(), {
   isDialogVisible: false,
-  id: undefined,
 });
 
 const emit = defineEmits<Emit>();
@@ -49,23 +47,18 @@ const emit = defineEmits<Emit>();
 /* =======================
  * Refs & Reactive State
  * ======================= */
-const id = ref<number | null>(null); // `id` can be null
 
 /* =======================
  * Form State
  * ======================= */
 
 const formRef = ref<VForm>();
-const initialFormState: CreateLedgerMutationVariables = {
-  amount: null,
-  transactionType: LedgerType.Credit,
-  transactionDate: new Date(),
-  transactionBy: "",
-  remarks: "",
-  referenceId: "",
+const initialFormState = {
+  reportType: "Monthly",
+  date:  new Date(),
 };
 
-const form = reactive<CreateLedgerMutationVariables>({ ...initialFormState });
+const form = reactive({ ...initialFormState });
 /* =======================
  * GraphQL Mutations
  * ======================= */
@@ -101,13 +94,6 @@ const onSubmit = async () => {
     const formValidate = await formRef.value?.validate();
     if (!formValidate?.valid) return;
 
-    if (props.id) {
-      await updateLedger({ id: props.id, ...form });
-      toast.success("Ledger updated successfully");
-    } else {
-      await createLedger(form);
-      toast.success("Ledger created successfully");
-    }
     onClose();
   } catch (error) {
     console.error(error);
@@ -129,31 +115,7 @@ const onClose = () => {
  * Watchers
  * ======================= */
 
-watch(
-  () => props.id,
-  async (id) => {
-    if (id) {
-      await findLedger(null, { id });
-    }
-  },
-  { immediate: true }
-);
 
-watch(
-  () => ledgerData.value,
-  (data) => {
-    if (data?.Ledger) {
-      const ledger = data.Ledger;
-      Object.keys(form).forEach((key) => {
-        if (Object.prototype.hasOwnProperty.call(ledger, key)) {
-          (form as any)[key] =
-            ledger[key as keyof typeof ledger] ?? (form as any)[key];
-        }
-      });
-    }
-  },
-  { immediate: true }
-);
 
 watch(
   [ledgerCreateError, ledgerUpdateError, ledgerFindError],
@@ -166,9 +128,7 @@ watch(
  * Computed Properties
  * ======================= */
 
-const title = computed(() => {
-  return props.id ? `Edit Record ` : "Add Record";
-});
+const title = computed(() => 'Report Download');
 
 /* =======================
  * Exposes
@@ -184,45 +144,32 @@ const title = computed(() => {
         <VProgressLinear v-if="ledgerFindFetching" indeterminate height="3" color="primary" striped :rounded="false" />
         <VForm v-else ref="formRef" @submit.prevent="onSubmit()" @reset.prevent="onReset">
           <VRow>
-
             <VCol cols="12">
-              <AppSelect   prepend-inner-icon="tabler-credit-card-pay" label="Transaction Type"
-                :items="[LedgerType.Credit, LedgerType.Debit]" placeholder="Select Type" :rules="[requiredValidator]"
-                v-model="form.transactionType" />
+              <AppSelect prepend-inner-icon="tabler-file-description" label="Report Type"
+                :items="['Monthly', 'Yearly']" placeholder="Select Type" :rules="[requiredValidator]"
+                v-model="form.reportType" />
             </VCol>
 
+            <VCol cols="12" v-if="form.reportType">
+              <VLabel class="mb-1 text-body-2 text-wrap text-bold" style="color: #2f2b3de6">
+                Month / Year
+              </VLabel>
+              
+                <VueDatePicker   teleport="body" v-if="form.reportType === 'Monthly'" id="datepicker" v-model="form.date"   text-input   auto-apply  month-picker ></VueDatePicker>
 
-        
-            <VCol cols="12">
-              <AppDateTimePicker
-                v-model="form.transactionDate"
-                label="Transaction Date"
-                    :config="{ dateFormat: 'F j, Y' }"
-              />
-            </VCol>
-            <VCol cols="12">
-              <AppTextField label="Payer / Payee" v-model.trim="form.transactionBy" :rules="[requiredValidator]"  />
-            </VCol>
+                <VueDatePicker  teleport="body"  v-if="form.reportType === 'Yearly'" id="yeardatepicker" v-model="form.date" text-input    auto-apply  year-picker ></VueDatePicker>
 
-            <VCol cols="12">
-              <AppTextField label="Amount" v-model.number="form.amount" />
+            
             </VCol>
 
-            <VCol cols="12">
-              <AppTextField label="Reference Id" v-model.trim="form.referenceId" />
-            </VCol>
-       
-            <VCol cols="12">
-              <AppTextarea  label="Remarks" v-model.trim="form.remarks" />
-            </VCol>
-      
+
             <VCol cols="12">
               <div class="d-flex justify-end flex-wrap gap-3">
                 <VBtn variant="tonal" color="secondary" type="reset">
                   Reset
                 </VBtn>
                 <VBtn type="submit" :loading="ledgerCreateFetching || ledgerUpdateFetching">
-                  {{ id ? "Update" : "Save" }}
+                  Download
                 </VBtn>
               </div>
             </VCol>

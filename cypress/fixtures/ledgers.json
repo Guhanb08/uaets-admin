@@ -1,0 +1,50 @@
+[
+  {
+    "amount": 100,
+    "transactionType": "CREDIT",
+    "transactionDate": "2025-04-01",
+    "transactionBy": "அலிஸ்",
+    "remarks": "தொடக்க வைப்பு",
+    "referenceId": "REF001"
+  },
+  {
+    "amount": 50,
+    "transactionType": "DEBIT",
+    "transactionDate": "2025-04-02",
+    "transactionBy": "பாப்",
+    "remarks": "அலுவலக உபகரணங்கள்",
+    "referenceId": "REF002"
+  },
+  {
+    "amount": 250,
+    "transactionType": "CREDIT",
+    "transactionDate": "2025-04-03",
+    "transactionBy": "சார்லி",
+    "remarks": "வாடிக்கையாளர் செலுத்தியது",
+    "referenceId": "REF003"
+  },
+  {
+    "amount": 75,
+    "transactionType": "DEBIT",
+    "transactionDate": "2025-04-04",
+    "transactionBy": "டையானா",
+    "remarks": "பயணச் செலவு",
+    "referenceId": "REF004"
+  },
+  {
+    "amount": 500,
+    "transactionType": "CREDIT",
+    "transactionDate": "2025-04-05",
+    "transactionBy": "ஈலான்",
+    "remarks": "ஊதியம் / போனஸ்",
+    "referenceId": "REF005"
+  },
+  {
+    "amount": 30,
+    "transactionType": "DEBIT",
+    "transactionDate": "2025-04-06",
+    "transactionBy": "பிராங்",
+    "remarks": "லேசான சிற்றுண்டி",
+    "referenceId": "REF006"
+  }
+]
