@@ -15,7 +15,9 @@ import {
   ExcelExport,
   Filter,
   AggregateDirective as EAggregate,
-  AggregatesDirective,
+  AggregatesDirective as EAggregates,
+  ColumnDirective as EColumn,
+  ColumnsDirective as EColumns,
   Aggregate,
   Group,
   Page,
@@ -278,6 +280,14 @@ const attachSearchHandler = () => {
   }
 };
 
+const  netAmountAggregate = (args: any)=> {
+  const data = args.result as Ledger[];
+  return data.reduce((sum, row) => {
+    const amt = row.amount ?? 0;
+    console.log("amt", amt);
+    return sum + (row.transactionType === "DEBIT" ? -amt : amt);
+  }, 0);
+}
 
 /* =======================
  * Watchers
@@ -301,8 +311,13 @@ watch(
 /* =======================
  * Computed Properties
  * ======================= */
-const ledgerData = computed(() => {
-  return ledgers?.value?.AllLedger;
+ const ledgerData = computed(() => {
+  return ledgers?.value?.AllLedger?.map(entry => ({
+    ...entry,
+    transactionDate: entry.transactionDate
+      ? new Date(entry.transactionDate)
+      : null,
+  })) ?? [];
 });
 
 const groupOptions = { columns: [] };
@@ -323,14 +338,15 @@ const groupOptions = { columns: [] };
               ledgerDeleteLoading ||
               updateLedgerLoading
             " indeterminate height="3" color="primary" striped :rounded="false" />
-            <ejs-grid  v-if="ledgerData?.length" ref="grid" id="grid" :dataSource="ledgerData" :contextMenuItems="contextMenuItems"
+            <ejs-grid ref="grid" id="grid" :dataSource="ledgerData" :contextMenuItems="contextMenuItems"
+            
               :groupSettings="groupOptions" :allowRowDragAndDrop="false" :allowGrouping="true"
               :emptyRecordTemplate="'emptyRecordTemplate'" :allowSorting="true" :allowFiltering="true"
               :allowPaging="true" :allowResizing="true" :pageSettings="pageSettings" :filterSettings="filterSettings"
               :allowPdfExport="true" :allowExcelExport="true" :editSettings="editSettings" :toolbar="toolbar"
               :columns="columns" :toolbarClick="toolbarClick" @created="attachSearchHandler" :showColumnMenu="true"
               @contextMenuClick="contextClicked" :allowSelection="true" :selectionSettings="selectOptions"
-              :enablePersistence="false" @rowSelected="onRowSelected" @rowDeselected="onRowDeSelected" >
+              :enablePersistence="false" @rowSelected="onRowSelected" @rowDeselected="onRowDeSelected">
 
 
 
@@ -353,15 +369,21 @@ const groupOptions = { columns: [] };
                 </div>
               </template>
 
-              <e-aggregates>
+            <!--   <e-aggregates>
                 <e-aggregate>
                   <e-columns>
-                    <e-column field="amount" type="Sum" format="C2" footerTemplate="Total: ₹ ${Sum}" />
+                    <e-column
+        field="amount"
+        type="Custom"
+        :customAggregate="netAmountAggregate"
+        :format="{ type: 'Currency', currency: 'INR', minimumFractionDigits: 2 }"
+        footerTemplate="Net Total: ₹ ${Custom}"
+      />
                   </e-columns>
                 </e-aggregate>
               </e-aggregates>
 
-
+ -->
             </ejs-grid>
           </VCardText>
         </VCard>

@@ -85,7 +85,7 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
               v-show="!hideTitleAndIcon"
               class="app-logo-title"
             >
-            Taxi-itheorie
+          UAETS
             </h1>
           </Transition>
         </RouterLink>
